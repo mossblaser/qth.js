@@ -6,4 +6,17 @@ module.exports = {
 		filename: "bundle.js",
 		path: path.resolve(__dirname, "dist"),
 	},
+	module: {
+		rules: [
+			{
+				test: /\.js$/,
+				exclude: /node_modules/,
+				loader: "babel-loader",
+				query: {
+					presets: ['es2015'],
+					plugins: ["transform-object-rest-spread"],
+				},
+			},
+		],
+	},
 };
