@@ -1,4 +1,4 @@
-import Client from "../Qth.js";
+import Client from "./qth.js";
 
 class MockMQTTClient {
   constructor() {

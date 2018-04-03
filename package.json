@@ -1,5 +1,5 @@
 {
-  "name": "qth.js",
+  "name": "qth",
   "version": "0.1.0",
   "description": "A Javascript library for creating Qth clients.",
   "scripts": {
