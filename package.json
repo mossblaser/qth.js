@@ -15,9 +15,7 @@
   "author": "Jonathan Heathcote",
   "license": "MIT",
   "dependencies": {
-    "async-mqtt": "^1.0.1",
-    "webpack": "^4.4.1",
-    "webpack-cli": "^2.0.13"
+    "async-mqtt": "^1.0.1"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
