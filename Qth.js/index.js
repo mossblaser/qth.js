@@ -1,4 +1,3 @@
-//import MQTT from "async-mqtt";
 import MQTT from "async-mqtt";
 
 class Client {
@@ -9,7 +8,15 @@ class Client {
    * ----------
    * url_or_mqtt_client
    *    A URL string (e.g. ws://server:8080) or alternatively an async-mqtt
-   *    MQTT 'Client' object.
+   *    MQTT 'Client' object. If an async-mqtt Client, this must be configured
+   *    to send a will of the form:
+   *      {
+   *        "topic": `meta/clients/${clientId}`,
+   *        "payload": "",
+   *        "qos": 2,
+   *        "retain": true,
+   *      }
+   *    And to resubscribe on reconnect.
    * options
    *    An object containing options supported by the async-mqtt client along
    *    with the following additional options:
@@ -128,11 +135,10 @@ class Client {
    *      this client disconnects.
    */
   async register(path, behaviour, description, options={}) {
-    this._registration.topics[path] = {
+    this._registration.topics[path] = Object.assign({
       behaviour,
       description,
-      ...options,
-    };
+    }, options);
     return await this.sendRegistration();
   }
   
@@ -157,9 +163,9 @@ class Client {
    * Internal use. Called on MQTT message arrival, passes it on the registered
    * watchers.
    *
-   * Watchers are called with the message value as the first argument followed
-   * by the topic. If the message is empty undefined is passed, otherwise the
-   * deserialised JSON message is passed.
+   * Watchers are called with topic and message value as arguments. If the
+   * message is empty undefined is passed, otherwise the deserialised JSON
+   * message is passed.
    */
   _onMessage(topicUint8Array, messageUint8Array) {
     const topic = topicUint8Array.toString();
@@ -174,14 +180,14 @@ class Client {
       const subscription = this._watches.get(topic);
       subscription.lastValue = message;
       for (const callback of subscription.callbacks) {
-        callback(message, topic);
+        callback(topic, message);
       }
     }
   }
   
   /**
    * Internal use. Subscribe to a topic and call the supplied callback with two
-   * arguments: value and topic when a message is received. If the message is
+   * arguments: topic and value when a message is received. If the message is
    * empty (e.g. for property deletion), the message will be undefined,
    * otherwise it will be the deserialised JSON value.
    *
@@ -195,7 +201,7 @@ class Client {
       const subscription = this._watches.get(topic);
       subscription.callbacks.push(callback);
       if (isProperty && subscription.lastValue !== undefined) {
-        setTimeout(() => callback(subscription.lastValue, topic), 0);
+        setTimeout(() => callback(topic, subscription.lastValue), 0);
       }
     } else {
       // New subscription
@@ -232,7 +238,7 @@ class Client {
    * Watch a Qth event.
    *
    * When the event occurs, the provided callback will be called with the event
-   * value (deserialised into a Javascript object) and topic.
+   * topic and value (deserialised into a Javascript object).
    */
   async watchEvent(topic, callback) {
     return await this._watch(topic, callback, false);
@@ -251,12 +257,12 @@ class Client {
   }
   
   /**
-   * Watch a Qth event.
+   * Watch a Qth property.
    *
    * When the property value becomes known or changes, the provided callback
-   * will be called with the event value (deserialised into a Javascript
-   * object) and topic. If the property is deleted, the callback will be called
-   * with undefined as the property value.
+   * will be called with the topic and event value (deserialised into a
+   * Javascript object). If the property is deleted, the callback will be
+   * called with undefined as the property value.
    */
   async watchProperty(topic, callback) {
     return await this._watch(topic, callback, true);
@@ -280,3 +286,5 @@ class Client {
     await this._client.publish(topic, "", {qos: 2, retain: true});
   }
 }
+
+export default Client;
