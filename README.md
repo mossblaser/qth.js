@@ -1,6 +1,8 @@
 Qth.js
 ======
 
+**A Work in Progress...**
+
 A Javascript library for implementing [Qth](https://github.com/mossblaser/qth)
 clients.
 
