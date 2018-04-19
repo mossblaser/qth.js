@@ -160,6 +160,14 @@ class Client {
   }
   
   /**
+   * Shutdown the client.
+   */
+  end(force, callback) {
+    this._watches.clear();
+    this._client.end(force, callback);
+  }
+  
+  /**
    * Internal use. Called on MQTT message arrival, passes it on the registered
    * watchers.
    *
