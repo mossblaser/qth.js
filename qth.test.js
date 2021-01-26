@@ -65,7 +65,7 @@ async function makeConnectedClient() {
 }
 
 
-describe("registration", async function() {
+describe("registration", function() {
   function validateRegistrationCall(call, expectedTopics) {
     // Check to see if the initial registration message was received
     expect(call.args).toHaveLength(3);
