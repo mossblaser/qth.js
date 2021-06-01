@@ -1,6 +1,6 @@
 {
   "name": "qth",
-  "version": "0.1.1",
+  "version": "0.1.0",
   "description": "A Javascript library for creating Qth clients.",
   "main": "lib/qth.js",
   "scripts": {
@@ -18,7 +18,9 @@
   "author": "Jonathan Heathcote",
   "license": "MIT",
   "dependencies": {
-    "async-mqtt": "^1.0.1",
+    "async-mqtt": "^1.0.1"
+  },
+  "devDependencies": {
     "@babel/cli": "^7.12.10",
     "@babel/core": "^7.12.10",
     "@babel/preset-env": "^7.12.11",
